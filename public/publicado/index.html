@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colectivos MDP</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0b0f1a; --surface: #131929; --border: #1e2d47;
+    --accent: #00e5ff; --text: #e8edf5; --muted: #5a7499;
+    --success: #00c97a; --warn: #ffb800; --danger: #ff4757;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  .container { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  header { margin-bottom: 2rem; animation: fadeDown 0.6s ease both; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(0,229,255,0.2); background: rgba(0,229,255,0.08);
+    color: var(--accent); font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    padding: 4px 10px; border-radius: 20px; margin-bottom: 1rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .badge .dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:pulse 1.5s infinite; }
+  .badge.offline { background:rgba(255,71,87,0.08); border-color:rgba(255,71,87,0.25); color:var(--danger); }
+  .badge.offline .dot { background:var(--danger); }
+  .badge.warn { background:rgba(255,184,0,0.08); border-color:rgba(255,184,0,0.3); color:var(--warn); }
+  .badge.warn .dot { background:var(--warn); }
+  h1 { font-size: clamp(2rem,6vw,3rem); font-weight:800; line-height:1.1; letter-spacing:-0.02em; }
+  h1 span { color: var(--accent); }
+  .subtitle { color:var(--muted); font-size:0.95rem; margin-top:0.5rem; }
+
+.status-panel {
+background:rgba(20,35,60,0.5); border:1px solid var(–border); border-radius:10px;
+padding:0.9rem 1.2rem; margin-bottom:1.5rem; font-family:‘DM Mono’,monospace;
+font-size:0.75rem; display:flex; align-items:flex-start; gap:0.75rem;
+animation:fadeUp 0.4s 0.1s ease both;
+}
+.status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:3px; }
+.status-dot.ok   { background:var(–success); box-shadow:0 0 6px var(–success); }
+.status-dot.fail { background:var(–danger);  box-shadow:0 0 6px var(–danger); }
+.status-dot.spin { background:var(–warn); animation:pulse 1s infinite; }
+.status-text { flex:1; color:var(–muted); line-height:1.6; }
+.status-text strong { color:var(–text); }
+
+.card { background:var(–surface); border:1px solid var(–border); border-radius:16px; padding:1.75rem; margin-bottom:1.25rem; animation:fadeUp 0.5s ease both; }
+.card-label { font-family:‘DM Mono’,monospace; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(–muted); margin-bottom:1rem; }
+select, input {
+width:100%; background:var(–bg); border:1px solid var(–border); border-radius:10px;
+color:var(–text); font-family:‘Syne’,sans-serif; font-size:1rem; padding:0.85rem 1rem;
+outline:none; transition:border-color 0.2s,box-shadow 0.2s; appearance:none;
+}
+select:focus, input:focus { border-color:var(–accent); box-shadow:0 0 0 3px rgba(0,229,255,0.1); }
+.select-wrapper { position:relative; }
+.select-wrapper::after { content:‘▾’; position:absolute; right:1rem; top:50%; transform:translateY(-50%); color:var(–accent); pointer-events:none; }
+.row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+input::placeholder { color:var(–muted); }
+
+button {
+width:100%; background:var(–accent); color:var(–bg); border:none; border-radius:10px;
+font-family:‘Syne’,sans-serif; font-weight:700; font-size:1rem; padding:1rem;
+cursor:pointer; transition:transform 0.15s,opacity 0.15s,box-shadow 0.2s; letter-spacing:0.02em;
+}
+button:hover { opacity:0.9; box-shadow:0 4px 20px rgba(0,229,255,0.3); transform:translateY(-1px); }
+button:active { transform:translateY(0); }
+button:disabled { opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+
+.loader { display:none; text-align:center; padding:2rem; color:var(–muted); font-size:0.9rem; }
+.spinner { width:36px; height:36px; border:3px solid var(–border); border-top-color:var(–accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem; }
+.error-box { display:none; background:rgba(255,71,87,0.08); border:1px solid rgba(255,71,87,0.25); border-radius:10px; padding:1rem 1.25rem; color:var(–danger); font-size:0.88rem; margin-top:1rem; line-height:1.7; font-family:‘DM Mono’,monospace; }
+
+#result { display:none; animation:fadeUp 0.4s ease both; }
+.result-card { background:var(–surface); border:1px solid var(–border); border-radius:16px; overflow:hidden; }
+.result-header { background:linear-gradient(135deg,rgba(0,229,255,0.08),rgba(255,107,53,0.04)); border-bottom:1px solid var(–border); padding:1.25rem 1.75rem; display:flex; align-items:center; gap:1rem; }
+.line-pill { background:var(–accent); color:var(–bg); font-family:‘DM Mono’,monospace; font-weight:500; font-size:1rem; padding:6px 14px; border-radius:8px; white-space:nowrap; }
+.stop-info { flex:1; min-width:0; }
+.stop-name { font-weight:700; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stop-sub  { font-size:0.78rem; color:var(–muted); font-family:‘DM Mono’,monospace; margin-top:2px; }
+.arrivals-list { padding:0.25rem 0; }
+.arrival-item { display:flex; align-items:center; padding:1rem 1.75rem; border-bottom:1px solid rgba(30,45,71,0.6); gap:1rem; }
+.arrival-item:last-child { border-bottom:none; }
+.arrival-time { font-size:2rem; font-weight:800; font-family:‘DM Mono’,monospace; min-width:80px; line-height:1; }
+.arrival-time.now  { color:var(–success); }
+.arrival-time.soon { color:var(–warn); }
+.arrival-time.later{ color:var(–text); }
+.arrival-label { font-size:0.72rem; color:var(–muted); margin-top:2px; font-family:‘DM Mono’,monospace; text-transform:uppercase; }
+.arrival-bar { flex:1; height:4px; background:var(–border); border-radius:4px; overflow:hidden; }
+.arrival-bar-fill { height:100%; border-radius:4px; transition:width 0.8s ease; }
+.arrival-bar-fill.now  { background:var(–success); }
+.arrival-bar-fill.soon { background:var(–warn); }
+.arrival-bar-fill.later{ background:var(–muted); }
+.arrival-vehicle { font-family:‘DM Mono’,monospace; font-size:0.78rem; color:var(–muted); text-align:right; min-width:60px; }
+.timestamp { font-family:‘DM Mono’,monospace; font-size:0.7rem; color:var(–muted); padding:0.75rem 1.75rem; border-top:1px solid var(–border); display:flex; justify-content:space-between; align-items:center; }
+.refresh-btn { background:transparent; border:1px solid var(–border); color:var(–accent); font-size:0.72rem; padding:4px 10px; border-radius:6px; width:auto; font-family:‘DM Mono’,monospace; font-weight:400; }
+.refresh-btn:hover { background:rgba(0,229,255,0.08); box-shadow:none; transform:none; }
+.note { margin-top:1.5rem; font-size:0.75rem; color:var(–muted); text-align:center; font-family:‘DM Mono’,monospace; line-height:1.7; }
+.note a { color:var(–accent); text-decoration:none; }
+
+@keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@media(max-width:480px){ .row{grid-template-columns:1fr} .arrival-time{font-size:1.6rem;min-width:60px} }
+</style>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge warn" id="main-badge"><span class="dot"></span><span id="badge-text">Verificando…</span></div>
+    <h1>Colectivos<br><span>Mar del Plata</span></h1>
+    <p class="subtitle">Tiempo de espera por línea e intersección</p>
+  </header>
+
+  <div class="status-panel" id="status-panel">
+    <div class="status-dot spin" id="status-dot"></div>
+    <div class="status-text" id="status-text">Conectando con el servidor…</div>
+  </div>
+
+  <div class="card" style="animation-delay:0.05s">
+    <div class="card-label">01 — Seleccioná la línea</div>
+    <div class="select-wrapper">
+      <select id="linea"><option value="">— Cargando… —</option></select>
+    </div>
+  </div>
+
+  <div class="card" style="animation-delay:0.1s">
+    <div class="card-label">02 — Intersección de calles</div>
+    <div class="row">
+      <input type="text" id="calle1" placeholder="Ej: Luro" autocomplete="off">
+      <input type="text" id="calle2" placeholder="Ej: Córdoba" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="card" style="animation-delay:0.15s">
+    <div class="card-label">03 — Sentido (opcional)</div>
+    <div class="select-wrapper">
+      <select id="sentido">
+        <option value="0">Ambos / No aplica</option>
+        <option value="1">Hacia el centro ↓</option>
+        <option value="2">Hacia la periferia ↑</option>
+      </select>
+    </div>
+  </div>
+
+<button id="btn-consultar" onclick="consultar()">Consultar tiempo de espera</button>
+
+  <div class="loader" id="loader"><div class="spinner"></div>Consultando al servidor de MGP…</div>
+  <div class="error-box" id="error-box"></div>
+
+  <div id="result">
+    <div class="result-card">
+      <div class="result-header">
+        <div class="line-pill" id="res-linea">—</div>
+        <div class="stop-info">
+          <div class="stop-name" id="res-parada">—</div>
+          <div class="stop-sub"  id="res-sub">—</div>
+        </div>
+      </div>
+      <div class="arrivals-list" id="arrivals-list"></div>
+      <div class="timestamp">
+        <span id="res-ts">—</span>
+        <button class="refresh-btn" onclick="consultar()">↻ Actualizar</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">Datos oficiales MGP · <a href="https://appsvr.mardelplata.gob.ar/cuando/index.html" target="_blank">appsvr.mardelplata.gob.ar</a></p>
+</div>
+
+<script>
+// URL del backend hardcodeada — mismo servidor que sirve este HTML
+const API = '';  // vacío = mismo origen (relative URL)
+
+window.addEventListener('load', async () => {
+  await checkStatus();
+  await loadLineas();
+});
+
+async function checkStatus() {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  const badge = document.getElementById('main-badge');
+  const btext = document.getElementById('badge-text');
+  try {
+    const res  = await fetch('/api/status', { signal: AbortSignal.timeout(5000) });
+    const data = await res.json();
+    if (data.ok && data.mgp.online) {
+      dot.className = 'status-dot ok';
+      txt.innerHTML = '<strong>Servidor online</strong> · MGP responde en ' + data.mgp.ms + 'ms ✓';
+      badge.className = 'badge'; btext.textContent = 'Conectado · Tiempo real';
+    } else {
+      dot.className = 'status-dot fail';
+      txt.innerHTML = '<strong>Servidor online</strong> · MGP no responde ahora';
+      badge.className = 'badge warn'; btext.textContent = 'Online · MGP con problemas';
+    }
+  } catch {
+    dot.className = 'status-dot fail';
+    txt.innerHTML = 'No se pudo conectar con el servidor';
+    badge.className = 'badge offline'; btext.textContent = 'Sin conexión';
+  }
+}
+
+async function loadLineas() {
+  const sel = document.getElementById('linea');
+  try {
+    const res  = await fetch('/api/lineas', { signal: AbortSignal.timeout(5000) });
+    const data = await res.json();
+    sel.innerHTML = '<option value="">— Elegí una línea —</option>';
+    (data.lineas || []).forEach(l => {
+      const o = document.createElement('option');
+      o.value = l.numero ?? l; o.textContent = l.nombre ?? 'Línea ' + (l.numero ?? l);
+      sel.appendChild(o);
+    });
+  } catch {
+    sel.innerHTML = '<option value="">— Elegí una línea —</option>';
+    [511,512,513,514,515,516,517,521,522,523,524,525,531,532,533,541,542,551,552,561,571,572,581,591,592,593,594,595,596]
+      .forEach(n => { const o = document.createElement('option'); o.value=n; o.textContent='Línea '+n; sel.appendChild(o); });
+  }
+}
+
+async function consultar() {
+  const linea   = document.getElementById('linea').value.trim();
+  const calle1  = document.getElementById('calle1').value.trim();
+  const calle2  = document.getElementById('calle2').value.trim();
+  const sentido = document.getElementById('sentido').value;
+  if (!linea)  return mostrarError('Seleccioná una línea.');
+  if (!calle1) return mostrarError('Ingresá la primera calle.');
+  if (!calle2) return mostrarError('Ingresá la segunda calle.');
+  ocultarResultado(); ocultarError();
+  mostrarLoader(true);
+  document.getElementById('btn-consultar').disabled = true;
+  try {
+    const params = new URLSearchParams({ linea, calle: calle1, inter: calle2, sentido });
+    const res    = await fetch('/api/arribo?' + params, { signal: AbortSignal.timeout(10000) });
+    const data   = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Error desconocido');
+    mostrarResultado(data);
+  } catch (err) {
+    mostrarError('Error: ' + err.message);
+  } finally {
+    mostrarLoader(false);
+    document.getElementById('btn-consultar').disabled = false;
+  }
+}
+
+function mostrarResultado(data) {
+  const { parada, arrivals } = data;
+  const slbl = parada.sentido==='1'?'Sentido: Centro':parada.sentido==='2'?'Sentido: Periferia':'Todos los sentidos';
+  document.getElementById('res-linea').textContent  = 'Línea ' + parada.linea;
+  document.getElementById('res-parada').textContent = parada.calle + ' y ' + parada.inter;
+  document.getElementById('res-sub').textContent    = slbl;
+  const list = document.getElementById('arrivals-list');
+  list.innerHTML = '';
+  if (!arrivals || arrivals.length === 0) {
+    list.innerHTML = '<div style="padding:1.5rem 1.75rem;color:var(--muted);font-size:0.9rem">Sin datos para esta parada. Probá otra intersección.</div>';
+  } else {
+    arrivals.slice(0,4).forEach(a => {
+      const min = a.minutos ?? 0;
+      const cls = min<=2?'now':min<=8?'soon':'later';
+      const pct = Math.max(8,100-(min/40)*100);
+      const lbl = min===0?'LLEGANDO':min===1?'1 minuto':min+' minutos';
+      list.innerHTML += '<div class="arrival-item"><div><div class="arrival-time '+cls+'">'+(min===0?'≈0':min)+'\'</div><div class="arrival-label">'+lbl+'</div></div><div class="arrival-bar"><div class="arrival-bar-fill '+cls+'" style="width:'+pct+'%"></div></div><div class="arrival-vehicle">Interno<br>'+a.interno+'</div></div>';
+    });
+  }
+  const now = new Date();
+  document.getElementById('res-ts').textContent = 'Actualizado: ' + now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('result').style.display = 'block';
+}
+
+function mostrarLoader(v)   { document.getElementById('loader').style.display = v?'block':'none'; }
+function ocultarResultado() { document.getElementById('result').style.display = 'none'; }
+function ocultarError()     { document.getElementById('error-box').style.display = 'none'; }
+function mostrarError(msg)  { const el=document.getElementById('error-box'); el.innerHTML=msg; el.style.display='block'; mostrarLoader(false); document.getElementById('btn-consultar').disabled=false; }
+document.addEventListener('keydown', e => { if (e.key==='Enter') consultar(); });
+</script>
+
+</body>
+</html>
