@@ -1,32 +1,27 @@
-mi const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const https = require('https');
-const http = require('http');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MGP_BASE = 'appsvr.mardelplata.gob.ar';
 
 app.use(cors());
+app.use(express.static(path.join(__dirname, 'public/publicado')));
 
-function fetchMGP(path) {
+function fetchMGP(urlPath) {
   return new Promise((resolve, reject) => {
     const options = {
       hostname: MGP_BASE,
-      path: '/cuando' + path,
+      path: '/cuando' + urlPath,
       method: 'GET',
-      headers: {
-        'User-Agent': 'CuandoLlega/MGP (Android)',
-        'Accept': 'application/json, text/plain, */*',
-      }
+      headers: { 'User-Agent': 'CuandoLlega/MGP (Android)', 'Accept': 'application/json, text/plain, */*' }
     };
     const req = https.request(options, res => {
       let data = '';
       res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); }
-        catch { resolve({ raw: data }); }
-      });
+      res.on('end', () => { try { resolve(JSON.parse(data)); } catch { resolve({ raw: data }); } });
     });
     req.on('error', reject);
     req.setTimeout(8000, () => { req.destroy(); reject(new Error('Timeout')); });
@@ -37,17 +32,14 @@ function fetchMGP(path) {
 app.get('/api/status', async (req, res) => {
   let mgpOk = false;
   const t0 = Date.now();
-  try {
-    await fetchMGP('/index.html');
-    mgpOk = true;
-  } catch {}
+  try { await fetchMGP('/index.html'); mgpOk = true; } catch {}
   res.json({ ok: true, proxy: 'online', mgp: { online: mgpOk, ms: Date.now() - t0 }, ts: new Date().toISOString() });
 });
 
-app.get('/api/lineas', async (req, res) => {
-  const estaticas = [511,512,513,514,515,516,517,521,522,523,524,525,531,532,533,541,542,551,552,561,571,572,581,591,592,593,594,595,596]
+app.get('/api/lineas', (req, res) => {
+  const lineas = [511,512,513,514,515,516,517,521,522,523,524,525,531,532,533,541,542,551,552,561,571,572,581,591,592,593,594,595,596]
     .map(n => ({ numero: String(n), nombre: 'Línea ' + n }));
-  res.json({ ok: true, source: 'static', lineas: estaticas });
+  res.json({ ok: true, lineas });
 });
 
 app.get('/api/arribo', async (req, res) => {
@@ -56,26 +48,4 @@ app.get('/api/arribo', async (req, res) => {
   if (!calle) return res.status(400).json({ ok: false, error: 'Falta: calle' });
   if (!inter) return res.status(400).json({ ok: false, error: 'Falta: inter' });
   try {
-    const path = '/ArrEstim?linea=' + encodeURIComponent(linea) +
-      '&calle=' + encodeURIComponent(calle.toUpperCase()) +
-      '&inter=' + encodeURIComponent(inter.toUpperCase()) +
-      '&sentido=' + (sentido || '0');
-    const data = await fetchMGP(path);
-    let arrivals = [];
-    if (Array.isArray(data)) arrivals = data;
-    else if (Array.isArray(data.arrivals)) arrivals = data.arrivals;
-    else if (Array.isArray(data.arrivos)) arrivals = data.arrivos;
-    else if (data.tiempo !== undefined) arrivals = [data];
-    arrivals = arrivals.map((a, i) => ({
-      orden: i + 1,
-      minutos: parseInt(a.minutos ?? a.tiempo ?? a.arribo ?? 0),
-      interno: a.interno ?? a.vehicle ?? '—',
-    }));
-    res.json({ ok: true, parada: { linea, calle: calle.toUpperCase(), inter: inter.toUpperCase(), sentido: sentido || '0' }, arrivals, timestamp: new Date().toISOString() });
-  } catch (err) {
-    res.status(502).json({ ok: false, error: 'Error MGP: ' + err.message });
-  }
-});
-app.use(express.static('public/publicado'));
-
-app.listen(PORT, () => console.log('Proxy corriendo en puerto ' + PORT));
+    const urlPath = '/ArrEstim?linea=' + encodeURIComponent(linea) + '&calle='
