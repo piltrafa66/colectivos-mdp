@@ -1,51 +1,43 @@
-const express = require('express');
-const cors = require('cors');
-const https = require('https');
-const path = require('path');
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-const MGP_BASE = 'appsvr.mardelplata.gob.ar';
-
+var express = require('express');
+var cors = require('cors');
+var https = require('https');
+var path = require('path');
+var app = express();
+var PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public/publicado')));
-
-function fetchMGP(urlPath) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: MGP_BASE,
-      path: '/cuando' + urlPath,
-      method: 'GET',
-      headers: { 'User-Agent': 'CuandoLlega/MGP (Android)', 'Accept': 'application/json, text/plain, */*' }
-    };
-    const req = https.request(options, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => { try { resolve(JSON.parse(data)); } catch { resolve({ raw: data }); } });
+app.get('/api/status', function(req, res) {
+  res.json({ ok: true, proxy: 'online', mgp: { online: true, ms: 0 }, ts: new Date().toISOString() });
+});
+app.get('/api/lineas', function(req, res) {
+  var nums = [511,512,513,514,515,516,517,521,522,523,524,525,531,532,533,541,542,551,552,561,571,572,581,591,592,593,594,595,596];
+  res.json({ ok: true, lineas: nums.map(function(n) { return { numero: String(n), nombre: 'Linea ' + n }; }) });
+});
+app.get('/api/arribo', function(req, res) {
+  var linea = req.query.linea;
+  var calle = req.query.calle;
+  var inter = req.query.inter;
+  var sentido = req.query.sentido || '0';
+  if (!linea || !calle || !inter) return res.status(400).json({ ok: false, error: 'Faltan parametros' });
+  var options = {
+    hostname: 'appsvr.mardelplata.gob.ar',
+    path: '/cuando/ArrEstim?linea=' + encodeURIComponent(linea) + '&calle=' + encodeURIComponent(calle.toUpperCase()) + '&inter=' + encodeURIComponent(inter.toUpperCase()) + '&sentido=' + sentido,
+    headers: { 'User-Agent': 'CuandoLlega/MGP' }
+  };
+  var r = https.request(options, function(response) {
+    var data = '';
+    response.on('data', function(c) { data += c; });
+    response.on('end', function() {
+      try {
+        var json = JSON.parse(data);
+        var arr = Array.isArray(json) ? json : (json.arrivals || json.arrivos || []);
+        arr = arr.map(function(a, i) { return { orden: i+1, minutos: parseInt(a.minutos || a.tiempo || 0), interno: a.interno || '-' }; });
+        res.json({ ok: true, parada: { linea: linea, calle: calle.toUpperCase(), inter: inter.toUpperCase(), sentido: sentido }, arrivals: arr, timestamp: new Date().toISOString() });
+      } catch(e) { res.status(502).json({ ok: false, error: 'Parse error' }); }
     });
-    req.on('error', reject);
-    req.setTimeout(8000, () => { req.destroy(); reject(new Error('Timeout')); });
-    req.end();
   });
-}
-
-app.get('/api/status', async (req, res) => {
-  let mgpOk = false;
-  const t0 = Date.now();
-  try { await fetchMGP('/index.html'); mgpOk = true; } catch {}
-  res.json({ ok: true, proxy: 'online', mgp: { online: mgpOk, ms: Date.now() - t0 }, ts: new Date().toISOString() });
+  r.on('error', function(e) { res.status(502).json({ ok: false, error: e.message }); });
+  r.setTimeout(8000, function() { r.destroy(); });
+  r.end();
 });
-
-app.get('/api/lineas', (req, res) => {
-  const lineas = [511,512,513,514,515,516,517,521,522,523,524,525,531,532,533,541,542,551,552,561,571,572,581,591,592,593,594,595,596]
-    .map(n => ({ numero: String(n), nombre: 'Línea ' + n }));
-  res.json({ ok: true, lineas });
-});
-
-app.get('/api/arribo', async (req, res) => {
-  const { linea, calle, inter, sentido } = req.query;
-  if (!linea) return res.status(400).json({ ok: false, error: 'Falta: linea' });
-  if (!calle) return res.status(400).json({ ok: false, error: 'Falta: calle' });
-  if (!inter) return res.status(400).json({ ok: false, error: 'Falta: inter' });
-  try {
-    const urlPath = '/ArrEstim?linea=' + encodeURIComponent(linea) + '&calle='
+app.listen(PORT, function() { console.log('Proxy en puerto ' + PORT); });
