@@ -1,4 +1,4 @@
-const express = require('express');
+mi const express = require('express');
 const cors = require('cors');
 const https = require('https');
 const http = require('http');
@@ -76,5 +76,6 @@ app.get('/api/arribo', async (req, res) => {
     res.status(502).json({ ok: false, error: 'Error MGP: ' + err.message });
   }
 });
+app.use(express.static('public/publicado'));
 
 app.listen(PORT, () => console.log('Proxy corriendo en puerto ' + PORT));
