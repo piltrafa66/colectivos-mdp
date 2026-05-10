@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alerta Colectivos — Fede</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg: #0a0a0a;
+–surface: #111;
+–border: #222;
+–accent-yellow: #f5e642;
+–accent-green: #00ff88;
+–accent-red: #ff3b3b;
+–accent-blue: #4af;
+–text: #f0f0f0;
+–muted: #555;
+–muted2: #333;
+}
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::after {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.04’/%3E%3C/svg%3E”);
+pointer-events: none;
+z-index: 100;
+opacity: 0.5;
+}
+
+.container {
+max-width: 420px;
+margin: 0 auto;
+padding: 1.5rem 1.25rem 4rem;
+position: relative;
+z-index: 1;
+}
+
+/* Header */
+.header {
+margin-bottom: 2rem;
+animation: slideDown 0.5s ease both;
+}
+
+.header-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 0.25rem;
+}
+
+.label {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(–muted);
+}
+
+.clock {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.75rem;
+color: var(–accent-yellow);
+letter-spacing: 0.1em;
+}
+
+h1 {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 3.5rem;
+line-height: 0.9;
+letter-spacing: 0.02em;
+color: var(–text);
+}
+
+h1 em {
+color: var(–accent-yellow);
+font-style: normal;
+}
+
+.subtitle {
+font-size: 0.8rem;
+color: var(–muted);
+margin-top: 0.5rem;
+font-weight: 300;
+}
+
+/* Status bar */
+.status-bar {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+padding: 0.75rem 1rem;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 8px;
+margin-bottom: 1.5rem;
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+animation: slideDown 0.5s 0.1s ease both;
+}
+
+.status-dot {
+width: 7px; height: 7px;
+border-radius: 50%;
+flex-shrink: 0;
+}
+.status-dot.ok { background: var(–accent-green); box-shadow: 0 0 8px var(–accent-green); }
+.status-dot.warn { background: var(–accent-yellow); animation: blink 1s infinite; }
+.status-dot.off { background: var(–accent-red); }
+
+.status-text { flex: 1; color: var(–muted); }
+.status-text strong { color: var(–text); }
+
+/* Alerta horaria */
+.alert-banner {
+display: none;
+padding: 1rem 1.25rem;
+border-radius: 8px;
+margin-bottom: 1.5rem;
+font-size: 0.85rem;
+line-height: 1.5;
+animation: pulse-border 1.5s infinite;
+border: 2px solid var(–accent-yellow);
+background: rgba(245, 230, 66, 0.06);
+color: var(–accent-yellow);
+font-weight: 500;
+}
+
+.alert-banner.visible { display: block; }
+
+/* Paradas */
+.paradas-grid {
+display: grid;
+gap: 1rem;
+margin-bottom: 1.5rem;
+}
+
+.parada-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+overflow: hidden;
+transition: border-color 0.3s;
+animation: slideUp 0.5s ease both;
+}
+
+.parada-card:nth-child(2) { animation-delay: 0.1s; }
+
+.parada-card.winner {
+border-color: var(–accent-green);
+box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.parada-card.loser { opacity: 0.6; }
+
+.parada-header {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+padding: 0.875rem 1rem;
+border-bottom: 1px solid var(–border);
+}
+
+.linea-badge {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.5rem;
+line-height: 1;
+color: var(–bg);
+background: var(–accent-yellow);
+padding: 2px 8px;
+border-radius: 4px;
+min-width: 48px;
+text-align: center;
+}
+
+.parada-info { flex: 1; min-width: 0; }
+
+.parada-nombre {
+font-size: 0.8rem;
+font-weight: 600;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+color: var(–text);
+}
+
+.parada-sub {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+margin-top: 2px;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+}
+
+.winner-badge {
+display: none;
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–accent-green);
+background: rgba(0, 255, 136, 0.1);
+border: 1px solid rgba(0, 255, 136, 0.3);
+padding: 3px 7px;
+border-radius: 4px;
+letter-spacing: 0.1em;
+white-space: nowrap;
+}
+
+.parada-card.winner .winner-badge { display: block; }
+
+/* Arrivals */
+.arrivals {
+padding: 0.75rem 1rem;
+}
+
+.arrival-row {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+padding: 0.5rem 0;
+border-bottom: 1px solid var(–muted2);
+}
+
+.arrival-row:last-child { border-bottom: none; }
+
+.arrival-min {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2.2rem;
+line-height: 1;
+min-width: 52px;
+color: var(–text);
+}
+
+.arrival-min.now { color: var(–accent-green); }
+.arrival-min.soon { color: var(–accent-yellow); }
+
+.arrival-details { flex: 1; }
+
+.arrival-label {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.08em;
+}
+
+.arrival-interno {
+font-size: 0.75rem;
+color: var(–muted);
+font-family: ‘Space Mono’, monospace;
+margin-top: 1px;
+}
+
+.arrival-bar-wrap {
+width: 60px;
+}
+
+.arrival-bar {
+height: 3px;
+background: var(–muted2);
+border-radius: 2px;
+overflow: hidden;
+}
+
+.arrival-bar-fill {
+height: 100%;
+border-radius: 2px;
+transition: width 1s ease;
+}
+
+.arrival-bar-fill.now  { background: var(–accent-green); }
+.arrival-bar-fill.soon { background: var(–accent-yellow); }
+.arrival-bar-fill.later{ background: var(–muted); }
+
+.no-data {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–muted);
+padding: 0.75rem 0;
+text-align: center;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+}
+
+/* Loading skeleton */
+.skeleton {
+height: 60px;
+background: linear-gradient(90deg, var(–muted2) 25%, var(–border) 50%, var(–muted2) 75%);
+background-size: 200% 100%;
+animation: shimmer 1.5s infinite;
+border-radius: 4px;
+margin: 0.5rem 0;
+}
+
+/* Footer */
+.footer {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding-top: 0.75rem;
+border-top: 1px solid var(–border);
+margin-bottom: 1.5rem;
+}
+
+.footer-ts {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+}
+
+.refresh-btn {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–accent-yellow);
+background: transparent;
+border: 1px solid var(–muted2);
+padding: 4px 10px;
+border-radius: 4px;
+cursor: pointer;
+transition: border-color 0.2s, background 0.2s;
+letter-spacing: 0.08em;
+}
+
+.refresh-btn:hover { border-color: var(–accent-yellow); background: rgba(245,230,66,0.05); }
+
+/* Recomendación */
+.recomendacion {
+display: none;
+padding: 1rem 1.25rem;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+margin-bottom: 1.5rem;
+animation: slideUp 0.4s ease both;
+}
+
+.recomendacion.visible { display: block; }
+
+.reco-label {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.12em;
+margin-bottom: 0.5rem;
+}
+
+.reco-text {
+font-size: 1rem;
+font-weight: 600;
+line-height: 1.4;
+}
+
+.reco-text span { color: var(–accent-green); }
+
+.reco-sub {
+font-size: 0.78rem;
+color: var(–muted);
+margin-top: 0.35rem;
+}
+
+/* Countdown */
+.countdown-section {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 1rem 1.25rem;
+margin-bottom: 1.5rem;
+animation: slideUp 0.5s 0.2s ease both;
+}
+
+.countdown-label {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.12em;
+margin-bottom: 0.5rem;
+}
+
+.countdown-time {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 3rem;
+line-height: 1;
+color: var(–accent-yellow);
+letter-spacing: 0.05em;
+}
+
+.countdown-sub {
+font-size: 0.75rem;
+color: var(–muted);
+margin-top: 0.25rem;
+}
+
+.countdown-section.active .countdown-time { color: var(–accent-green); }
+.countdown-section.pasado .countdown-time { color: var(–muted); }
+
+/* Notif toggle */
+.notif-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0.875rem 1.25rem;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+margin-bottom: 1rem;
+animation: slideUp 0.5s 0.3s ease both;
+}
+
+.notif-label {
+font-size: 0.85rem;
+font-weight: 500;
+}
+
+.notif-sub {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+margin-top: 2px;
+letter-spacing: 0.05em;
+}
+
+.toggle {
+width: 44px; height: 24px;
+background: var(–muted2);
+border-radius: 12px;
+position: relative;
+cursor: pointer;
+transition: background 0.3s;
+border: none;
+flex-shrink: 0;
+}
+
+.toggle::after {
+content: ‘’;
+position: absolute;
+width: 18px; height: 18px;
+background: var(–muted);
+border-radius: 50%;
+top: 3px; left: 3px;
+transition: transform 0.3s, background 0.3s;
+}
+
+.toggle.on { background: rgba(0,255,136,0.2); }
+.toggle.on::after { transform: translateX(20px); background: var(–accent-green); }
+
+/* Animations */
+@keyframes slideDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideUp   { from { opacity:0; transform:translateY(12px);  } to { opacity:1; transform:translateY(0); } }
+@keyframes shimmer   { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+@keyframes blink     { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+@keyframes pulse-border { 0%,100% { border-color: var(–accent-yellow); } 50% { border-color: rgba(245,230,66,0.3); } }
+</style>
+
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+
+  <div class="header">
+    <div class="header-top">
+      <span class="label">MGP Transporte · Fede</span>
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
+    <h1>MI<br><em>COLECTIVO</em></h1>
+    <p class="subtitle">Güemes/Juan B. Justo · Alem/Juan B. Justo · desde 17:15</p>
+  </div>
+
+  <!-- Status -->
+
+  <div class="status-bar" id="status-bar">
+    <div class="status-dot warn" id="status-dot"></div>
+    <div class="status-text" id="status-text">Conectando con el servidor…</div>
+  </div>
+
+  <!-- Alerta horaria -->
+
+  <div class="alert-banner" id="alert-banner">
+    ⚡ SON LAS 17:15 — consultando cuál colectivo llega antes…
+  </div>
+
+  <!-- Countdown -->
+
+  <div class="countdown-section" id="countdown-section">
+    <div class="countdown-label">Próxima consulta automática en</div>
+    <div class="countdown-time" id="countdown-time">--:--</div>
+    <div class="countdown-sub" id="countdown-sub">La app consulta automáticamente a las 17:15</div>
+  </div>
+
+  <!-- Recomendación -->
+
+  <div class="recomendacion" id="recomendacion">
+    <div class="reco-label">▶ Tomá este</div>
+    <div class="reco-text" id="reco-text">—</div>
+    <div class="reco-sub" id="reco-sub">—</div>
+  </div>
+
+  <!-- Paradas -->
+
+  <div class="paradas-grid" id="paradas-grid">
+
+```
+<!-- 523 -->
+<div class="parada-card" id="card-523">
+  <div class="parada-header">
+    <div class="linea-badge">523</div>
+    <div class="parada-info">
+      <div class="parada-nombre">Güemes y Juan B. Justo</div>
+      <div class="parada-sub">Al Faro</div>
+    </div>
+    <div class="winner-badge">✓ TOMÁ ESTE</div>
+  </div>
+  <div class="arrivals" id="arrivals-523">
+    <div class="skeleton"></div>
+  </div>
+</div>
+
+<!-- 511 -->
+<div class="parada-card" id="card-511">
+  <div class="parada-header">
+    <div class="linea-badge" style="background:var(--accent-blue);color:#000">511</div>
+    <div class="parada-info">
+      <div class="parada-nombre">Alem y Juan B. Justo</div>
+      <div class="parada-sub">A Acantilados · Ramal Al Faro</div>
+    </div>
+    <div class="winner-badge">✓ TOMÁ ESTE</div>
+  </div>
+  <div class="arrivals" id="arrivals-511">
+    <div class="skeleton"></div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Footer -->
+
+  <div class="footer">
+    <span class="footer-ts" id="footer-ts">Sin datos aún</span>
+    <button class="refresh-btn" onclick="consultarAmbas()">↻ ACTUALIZAR</button>
+  </div>
+
+  <!-- Notificaciones -->
+
+  <div class="notif-row">
+    <div>
+      <div class="notif-label">Alerta automática 17:15</div>
+      <div class="notif-sub">Consulta y notifica al llegar la hora</div>
+    </div>
+    <button class="toggle" id="notif-toggle" onclick="toggleNotif()"></button>
+  </div>
+
+</div>
+
+<script>
+// ─── Config ──────────────────────────────────────────────────────────────────
+const API = 'https://colectivos-mdp.onrender.com';
+
+const PARADAS = [
+  {
+    id: '523',
+    linea: '523',
+    calle: 'MARTIN MIGUEL DE GUEMES',
+    inter: 'AVENIDA JUAN B. JUSTO',
+    sentido: '0',
+    destino: 'AL FARO',
+    ramal: ''
+  },
+  {
+    id: '511',
+    linea: '511',
+    calle: 'LEANDRO N. ALEM',
+    inter: 'AVENIDA JUAN B. JUSTO',
+    sentido: '0',
+    destino: 'A ACANTILADOS',
+    ramal: 'AL FARO'
+  }
+];
+
+// ─── Estado ───────────────────────────────────────────────────────────────────
+let resultados = {};
+let notifActiva = false;
+let notifDisparada = false;
+let intervaloConsulta = null;
+
+// ─── Clock ────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  updateCountdown(now);
+  checkHorarioAlerta(now);
+}
+
+function updateCountdown(now) {
+  const target = new Date(now);
+  target.setHours(17, 15, 0, 0);
+
+  const diff = target - now;
+  const section = document.getElementById('countdown-section');
+  const timeEl = document.getElementById('countdown-time');
+  const subEl  = document.getElementById('countdown-sub');
+
+  if (diff > 0) {
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    timeEl.textContent = (h > 0 ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    subEl.textContent = 'La app consulta automáticamente a las 17:15';
+    section.className = 'countdown-section';
+  } else if (diff > -3600000) {
+    timeEl.textContent = 'ACTIVO';
+    subEl.textContent = 'Consultando cada 60 segundos';
+    section.className = 'countdown-section active';
+  } else {
+    timeEl.textContent = 'FINALIZADO';
+    subEl.textContent = 'El horario de alerta ya pasó';
+    section.className = 'countdown-section pasado';
+  }
+}
+
+function checkHorarioAlerta(now) {
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const enHorario = (h === 17 && m >= 15) || (h === 17 && m <= 45) || (h === 18 && m <= 0);
+
+  const banner = document.getElementById('alert-banner');
+
+  if (enHorario) {
+    banner.classList.add('visible');
+    // Consultar automáticamente cada 60 segundos durante el horario
+    if (!intervaloConsulta) {
+      consultarAmbas();
+      intervaloConsulta = setInterval(consultarAmbas, 60000);
+    }
+    // Notificación del navegador
+    if (notifActiva && !notifDisparada && h === 17 && m === 15) {
+      notifDisparada = true;
+      enviarNotificacion();
+    }
+  } else {
+    banner.classList.remove('visible');
+    if (intervaloConsulta) {
+      clearInterval(intervaloConsulta);
+      intervaloConsulta = null;
+    }
+  }
+}
+
+// ─── Consultar MGP ────────────────────────────────────────────────────────────
+async function consultarParada(parada) {
+  const params = new URLSearchParams({
+    linea: parada.linea,
+    calle: parada.calle,
+    inter: parada.inter,
+    sentido: parada.sentido
+  });
+
+  try {
+    const res = await fetch(API + '/api/arribo?' + params, {
+      signal: AbortSignal.timeout(10000)
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
+async function consultarAmbas() {
+  setStatus('warn', 'Consultando paradas…');
+
+  // Consultar ambas en paralelo
+  const [res523, res511] = await Promise.all([
+    consultarParada(PARADAS[0]),
+    consultarParada(PARADAS[1])
+  ]);
+
+  resultados['523'] = res523;
+  resultados['511'] = res511;
+
+  renderParada('523', res523);
+  renderParada('511', res511);
+  actualizarRecomendacion();
+
+  const now = new Date();
+  document.getElementById('footer-ts').textContent =
+    'Actualizado: ' + now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  if (res523.ok || res511.ok) {
+    setStatus('ok', '<strong>Datos actualizados</strong> · MGP online');
+  } else {
+    setStatus('off', 'Sin datos del servidor de MGP');
+  }
+}
+
+function renderParada(id, data) {
+  const el = document.getElementById('arrivals-' + id);
+
+  if (!data.ok || !data.arrivals || data.arrivals.length === 0) {
+    el.innerHTML = '<div class="no-data">Sin datos disponibles ahora</div>';
+    return;
+  }
+
+  let html = '';
+  data.arrivals.slice(0, 3).forEach(a => {
+    const min = parseInt(a.minutos ?? 0);
+    const cls = min <= 2 ? 'now' : min <= 8 ? 'soon' : 'later';
+    const pct = Math.max(5, 100 - (min / 40) * 100);
+    const lbl = min === 0 ? 'LLEGANDO' : min + ' MIN';
+
+    html += `
+      <div class="arrival-row">
+        <div class="arrival-min ${cls}">${min === 0 ? '0' : min}</div>
+        <div class="arrival-details">
+          <div class="arrival-label">${lbl}</div>
+          <div class="arrival-interno">Int. ${a.interno || '—'}</div>
+        </div>
+        <div class="arrival-bar-wrap">
+          <div class="arrival-bar">
+            <div class="arrival-bar-fill ${cls}" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  el.innerHTML = html;
+}
+
+function actualizarRecomendacion() {
+  const r523 = resultados['523'];
+  const r511 = resultados['511'];
+
+  const card523 = document.getElementById('card-523');
+  const card511 = document.getElementById('card-511');
+  const reco = document.getElementById('recomendacion');
+  const recoText = document.getElementById('reco-text');
+  const recoSub = document.getElementById('reco-sub');
+
+  card523.classList.remove('winner', 'loser');
+  card511.classList.remove('winner', 'loser');
+
+  const min523 = (r523?.ok && r523?.arrivals?.length > 0) ? parseInt(r523.arrivals[0].minutos ?? 99) : 99;
+  const min511 = (r511?.ok && r511?.arrivals?.length > 0) ? parseInt(r511.arrivals[0].minutos ?? 99) : 99;
+
+  if (min523 === 99 && min511 === 99) {
+    reco.classList.remove('visible');
+    return;
+  }
+
+  reco.classList.add('visible');
+
+  if (min523 <= min511) {
+    card523.classList.add('winner');
+    card511.classList.add('loser');
+    recoText.innerHTML = '<span>Línea 523</span> en Güemes y Juan B. Justo';
+    recoSub.textContent = 'Llega en ' + min523 + ' min · ' + (min511 - min523) + ' min antes que el 511';
+  } else {
+    card511.classList.add('winner');
+    card523.classList.add('loser');
+    recoText.innerHTML = '<span>Línea 511</span> en Alem y Juan B. Justo';
+    recoSub.textContent = 'Llega en ' + min511 + ' min · ' + (min523 - min511) + ' min antes que el 523';
+  }
+}
+
+// ─── Notificaciones ───────────────────────────────────────────────────────────
+function toggleNotif() {
+  const btn = document.getElementById('notif-toggle');
+  if (!notifActiva) {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(p => {
+        if (p === 'granted') {
+          notifActiva = true;
+          btn.classList.add('on');
+        } else {
+          alert('Permiso de notificaciones denegado. Habilitalo en configuración del navegador.');
+        }
+      });
+    } else {
+      alert('Este navegador no soporta notificaciones.');
+    }
+  } else {
+    notifActiva = false;
+    btn.classList.remove('on');
+  }
+}
+
+function enviarNotificacion() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+  const min523 = (resultados['523']?.ok && resultados['523']?.arrivals?.length > 0)
+    ? parseInt(resultados['523'].arrivals[0].minutos ?? 99) : 99;
+  const min511 = (resultados['511']?.ok && resultados['511']?.arrivals?.length > 0)
+    ? parseInt(resultados['511'].arrivals[0].minutos ?? 99) : 99;
+
+  let body = '';
+  if (min523 <= min511 && min523 < 99) {
+    body = '🚌 Tomá el 523 en Güemes — llega en ' + min523 + ' min';
+  } else if (min511 < 99) {
+    body = '🚌 Tomá el 511 en Alem — llega en ' + min511 + ' min';
+  } else {
+    body = 'Sin datos disponibles ahora. Revisá la app.';
+  }
+
+  new Notification('¡Son las 17:15! Tu colectivo:', { body, icon: '' });
+}
+
+// ─── Status ───────────────────────────────────────────────────────────────────
+function setStatus(type, html) {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  dot.className = 'status-dot ' + type;
+  txt.innerHTML = html;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+setInterval(updateClock, 1000);
+updateClock();
+
+// Consulta inicial
+window.addEventListener('load', async () => {
+  try {
+    const res = await fetch(API + '/api/status', { signal: AbortSignal.timeout(5000) });
+    const data = await res.json();
+    if (data.ok && data.mgp.online) {
+      setStatus('ok', '<strong>Servidor online</strong> · MGP responde');
+      consultarAmbas();
+    } else {
+      setStatus('warn', '<strong>Servidor online</strong> · MGP con problemas');
+      document.getElementById('arrivals-523').innerHTML = '<div class="no-data">MGP sin respuesta</div>';
+      document.getElementById('arrivals-511').innerHTML = '<div class="no-data">MGP sin respuesta</div>';
+    }
+  } catch {
+    setStatus('off', 'Sin conexión con el servidor');
+    document.getElementById('arrivals-523').innerHTML = '<div class="no-data">Sin conexión</div>';
+    document.getElementById('arrivals-511').innerHTML = '<div class="no-data">Sin conexión</div>';
+  }
+});
+</script>
+
+</body>
+</html>
