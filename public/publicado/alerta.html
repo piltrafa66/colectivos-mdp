@@ -13,11 +13,11 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #000; --s1: #0a0a0a; --s2: #0d0d0d;
-  --border: #181818; --border2: #222;
+  --bg: #000; --s1: #0e0e14; --s2: #111118;
+  --border: #252525; --border2: #303040;
   --cyan: #00e5ff; --cyan2: #38b6ff; --green: #00e87a;
   --magenta: #cc00ff; --yellow: #ffe230;
-  --text: #f0f0f6; --muted: #44445a; --muted2: #1e1e28;
+  --text: #f0f0f6; --muted: #5a5a80; --muted2: #1e1e28;
 }
 html, body { height: 100%; background: #000 !important; }
 body {
@@ -110,7 +110,7 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 
 /* ── LIVE ROW ── */
 .live-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; animation: fadeUp 0.5s 0.1s ease both; }
-.live-pill { display: flex; align-items: center; gap: 6px; font-family: “Orbitron”, monospace; font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(–muted); border: 1px solid var(–border2); padding: 5px 12px; border-radius: 20px; background: var(–s1); }
+.live-pill { display: flex; align-items: center; gap: 6px; font-family: “Orbitron”, monospace; font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8888aa; border: 1px solid #333344; padding: 5px 12px; border-radius: 20px; background: #0e0e18; }
 .ldot { width: 6px; height: 6px; border-radius: 50%; background: var(–muted); transition: background 0.3s, box-shadow 0.3s; }
 .ldot.on { background: var(–green); box-shadow: 0 0 8px var(–green), 0 0 16px var(–green); animation: blink 2s infinite; }
 .ldot.warn { background: var(–yellow); box-shadow: 0 0 8px var(–yellow); }
@@ -118,7 +118,7 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 
 /* ── CLOCK ── */
 .clock-card { background: var(–s1); border: 1px solid var(–border2); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem; position: relative; overflow: hidden; animation: fadeUp 0.5s 0.12s ease both; }
-.clock-card::before { content: “”; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(–cyan), transparent); opacity: 0.6; }
+.clock-card::before { content: “”; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #00e5ff, transparent); opacity: 1; }
 .clock-card::after  { content: “”; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(–magenta), transparent); opacity: 0.25; }
 .cc-lbl { font-family: “Orbitron”, monospace; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(–muted); margin-bottom: 5px; }
 .cc-val { font-family: “Orbitron”, monospace; font-size: 1.65rem; font-weight: 700; color: var(–cyan); letter-spacing: 0.04em; line-height: 1; text-shadow: 0 0 18px rgba(0,229,255,0.5); }
@@ -142,7 +142,7 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 /* ── TOOLBAR ── */
 .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem; animation: fadeUp 0.5s 0.15s ease both; }
 .ts { font-family: “Orbitron”, monospace; font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(–muted); }
-.btn-neon { font-family: “Orbitron”, monospace; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #000; background: var(–cyan); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; box-shadow: 0 0 14px rgba(0,229,255,0.5), 0 0 28px rgba(0,229,255,0.18); transition: box-shadow 0.2s, transform 0.15s; position: relative; overflow: hidden; }
+.btn-neon { font-family: “Orbitron”, monospace; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #000; background: #00e5ff; border: none; padding: 11px 22px; border-radius: 10px; cursor: pointer; box-shadow: 0 0 20px rgba(0,229,255,0.7), 0 0 40px rgba(0,229,255,0.35), inset 0 1px 0 rgba(255,255,255,0.3); transition: box-shadow 0.2s, transform 0.15s; position: relative; overflow: hidden; font-size: 0.62rem; }
 .btn-neon:active { transform: scale(0.96); }
 .btn-neon::before { content: “”; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s; }
 .btn-neon:hover::before { left: 100%; }
@@ -156,10 +156,10 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 .p-card.winner::before { background: linear-gradient(90deg, transparent, var(–green), transparent); opacity: 0.38; }
 .p-card.loser  { opacity: 0.35; }
 .p-head { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(–border); }
-.p-num { font-family: “Orbitron”, monospace; font-size: 1.15rem; font-weight: 900; color: #000; background: linear-gradient(135deg, var(–cyan), var(–cyan2)); padding: 6px 12px; border-radius: 8px; line-height: 1; min-width: 60px; text-align: center; flex-shrink: 0; box-shadow: 0 0 14px rgba(0,229,255,0.4); }
-.p-num.alt { background: linear-gradient(135deg, var(–magenta), #8800cc); box-shadow: 0 0 14px rgba(204,0,255,0.4); }
+.p-num { font-family: “Orbitron”, monospace; font-size: 1.1rem; font-weight: 900; color: #000; background: linear-gradient(135deg, #00e5ff, #38b6ff); padding: 0; border-radius: 10px; line-height: 1; width: 64px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 20px rgba(0,229,255,0.7), 0 0 40px rgba(0,229,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3); }
+.p-num.alt { background: linear-gradient(135deg, #cc00ff, #8800cc); box-shadow: 0 0 20px rgba(204,0,255,0.7), 0 0 40px rgba(204,0,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2); width: 64px; height: 44px; }
 .p-info { flex: 1; min-width: 0; }
-.p-nombre { font-family: “Orbitron”, monospace; font-size: 0.6rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(–text); margin-bottom: 4px; letter-spacing: 0.05em; }
+.p-nombre { font-family: “Orbitron”, monospace; font-size: 0.6rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff; margin-bottom: 4px; letter-spacing: 0.05em; }
 .p-dest { font-size: 0.57rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(–muted); }
 .w-chip { display: none; font-family: “Orbitron”, monospace; font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(–green); background: rgba(0,232,122,0.08); border: 1px solid rgba(0,232,122,0.22); padding: 4px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; text-shadow: 0 0 8px rgba(0,232,122,0.5); }
 .p-card.winner .w-chip { display: block; }
