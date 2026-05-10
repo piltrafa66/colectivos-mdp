@@ -20,188 +20,104 @@
   --text: #f0f0f6; --muted: #5a5a80; --muted2: #1e1e28;
 }
 html, body { height: 100%; background: #000 !important; }
-body {
-  background: #000 !important;
-  color: var(--text);
-  font-family: "Exo 2", sans-serif;
-  min-height: 100%;
-  overflow-x: hidden;
-}
-
-.wrap {
-position: relative; z-index: 1;
-max-width: 440px; margin: 0 auto;
-padding: 0 1.25rem 6rem;
-}
-
-/* ── HERO UNIFICADO ── */
-.hero-block {
-position: relative;
-width: 100%;
-animation: fadeUp 0.6s ease both;
-margin-bottom: 0.5rem;
-}
-
-.hero-img-wrap {
-position: relative;
-width: 100%;
-overflow: hidden;
-}
-
-.hero-img {
-width: 100%;
-height: auto;
-display: block;
-}
-
-.hero-img-wrap::before {
-content: “”;
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 30%;
-background: linear-gradient(to bottom, #000 0%, transparent 100%);
-z-index: 2;
-pointer-events: none;
-}
-
-.hero-img-wrap::after {
-content: “”;
-position: absolute;
-bottom: 0; left: 0; right: 0;
-height: 50%;
-background: linear-gradient(to top, #000 0%, transparent 100%);
-z-index: 2;
-pointer-events: none;
-}
-
-.hero-title {
-position: absolute;
-bottom: 0.75rem;
-left: 0; right: 0;
-z-index: 3;
-text-align: center;
-padding: 0 1rem;
-}
-
-.app-name {
-font-family: “Orbitron”, monospace;
-font-size: clamp(2rem, 11vw, 3.2rem);
-font-weight: 900;
-letter-spacing: 0.06em;
-line-height: 1;
-color: #fff;
-text-shadow: 0 0 20px rgba(0,229,255,0.6), 0 0 40px rgba(0,229,255,0.3), 0 2px 8px rgba(0,0,0,0.9);
-}
-
-.app-name .now {
-color: var(–cyan);
-text-shadow: 0 0 15px rgba(0,229,255,1), 0 0 35px rgba(0,229,255,0.6), 0 0 60px rgba(0,229,255,0.3), 0 2px 8px rgba(0,0,0,0.9);
-}
-
-.app-tagline {
-font-family: “Orbitron”, monospace;
-font-size: 0.48rem;
-letter-spacing: 0.22em;
-text-transform: uppercase;
-color: rgba(255,255,255,0.35);
-margin-top: 0.3rem;
-text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-}
-
-/* ── LIVE ROW ── */
+body { background: #000 !important; color: var(--text); font-family: "Exo 2", sans-serif; min-height: 100%; overflow-x: hidden; }
+.wrap { position: relative; z-index: 1; max-width: 440px; margin: 0 auto; padding: 0 1.25rem 6rem; }
+.hero-block { position: relative; width: 100%; animation: fadeUp 0.6s ease both; margin-bottom: 0.5rem; }
+.hero-img-wrap { position: relative; width: 100%; overflow: hidden; }
+.hero-img { width: 100%; height: auto; display: block; }
+.hero-img-wrap::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 30%; background: linear-gradient(to bottom, #000 0%, transparent 100%); z-index: 2; pointer-events: none; }
+.hero-img-wrap::after  { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to top,   #000 0%, transparent 100%); z-index: 2; pointer-events: none; }
+.hero-title { position: absolute; bottom: 0.75rem; left: 0; right: 0; z-index: 3; text-align: center; padding: 0 1rem; }
+.app-name { font-family: "Orbitron", monospace; font-size: clamp(2rem,11vw,3.2rem); font-weight: 900; letter-spacing: 0.06em; line-height: 1; color: #fff; text-shadow: 0 0 20px rgba(0,229,255,0.6), 0 0 40px rgba(0,229,255,0.3), 0 2px 8px rgba(0,0,0,0.9); }
+.app-name .now { color: var(--cyan); text-shadow: 0 0 15px rgba(0,229,255,1), 0 0 35px rgba(0,229,255,0.6), 0 2px 8px rgba(0,0,0,0.9); }
+.app-tagline { font-family: "Orbitron", monospace; font-size: 0.48rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 0.3rem; }
 .live-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; animation: fadeUp 0.5s 0.1s ease both; }
-.live-pill { display: flex; align-items: center; gap: 6px; font-family: “Orbitron”, monospace; font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8888aa; border: 1px solid #333344; padding: 5px 12px; border-radius: 20px; background: #0e0e18; }
-.ldot { width: 6px; height: 6px; border-radius: 50%; background: var(–muted); transition: background 0.3s, box-shadow 0.3s; }
-.ldot.on { background: var(–green); box-shadow: 0 0 8px var(–green), 0 0 16px var(–green); animation: blink 2s infinite; }
-.ldot.warn { background: var(–yellow); box-shadow: 0 0 8px var(–yellow); }
-.mgp-tag { font-family: “Orbitron”, monospace; font-size: 0.55rem; letter-spacing: 0.15em; color: var(–cyan2); border: 1px solid rgba(56,182,255,0.2); padding: 5px 12px; border-radius: 20px; background: rgba(56,182,255,0.05); }
-
-/* ── CLOCK ── */
-.clock-card { background: var(–s1); border: 1px solid var(–border2); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem; position: relative; overflow: hidden; animation: fadeUp 0.5s 0.12s ease both; }
-.clock-card::before { content: “”; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #00e5ff, transparent); opacity: 1; }
-.clock-card::after  { content: “”; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(–magenta), transparent); opacity: 0.25; }
-.cc-lbl { font-family: “Orbitron”, monospace; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(–muted); margin-bottom: 5px; }
-.cc-val { font-family: “Orbitron”, monospace; font-size: 1.65rem; font-weight: 700; color: var(–cyan); letter-spacing: 0.04em; line-height: 1; text-shadow: 0 0 18px rgba(0,229,255,0.5); }
-.cdown-val { font-family: “Orbitron”, monospace; font-size: 1.15rem; font-weight: 700; color: var(–yellow); line-height: 1; text-align: right; text-shadow: 0 0 14px rgba(255,226,48,0.5); transition: color 0.3s; }
-.cdown-val.active { color: var(–green); text-shadow: 0 0 14px rgba(0,232,122,0.6); }
-.cdown-val.done   { color: var(–muted); text-shadow: none; }
-
-/* ── ALERT ── */
-.abanner { display: none; align-items: center; gap: 0.75rem; background: rgba(0,232,122,0.06); border: 1px solid rgba(0,232,122,0.3); border-radius: 12px; padding: 0.875rem 1.25rem; margin-bottom: 0.875rem; font-family: “Orbitron”, monospace; font-size: 0.62rem; color: var(–green); letter-spacing: 0.06em; }
-.abanner.visible { display: flex; }
-
-/* ── RECO ── */
-.reco { display: none; background: var(–s1); border: 1px solid rgba(0,232,122,0.28); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 0.875rem; position: relative; overflow: hidden; }
-.reco::before { content: “”; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(–green), transparent); opacity: 0.45; }
+.live-pill { display: flex; align-items: center; gap: 6px; font-family: "Orbitron", monospace; font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8888aa; border: 1px solid #333344; padding: 5px 12px; border-radius: 20px; background: #0e0e18; }
+.ldot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: background 0.3s, box-shadow 0.3s; }
+.ldot.on   { background: var(--green);  box-shadow: 0 0 8px var(--green),  0 0 16px var(--green);  animation: blink 2s infinite; }
+.ldot.warn { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); animation: blink 1s infinite; }
+.mgp-tag { font-family: "Orbitron", monospace; font-size: 0.55rem; letter-spacing: 0.15em; color: var(--cyan2); border: 1px solid rgba(56,182,255,0.2); padding: 5px 12px; border-radius: 20px; background: rgba(56,182,255,0.05); }
+.modo-card { background: var(--s1); border: 1px solid var(--border2); border-radius: 12px; padding: 0.875rem 1.25rem; margin-bottom: 0.875rem; display: flex; align-items: center; justify-content: space-between; animation: fadeUp 0.5s 0.08s ease both; position: relative; overflow: hidden; }
+.modo-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0.4; }
+.mc-lbl { font-family: "Orbitron", monospace; font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.mc-val { font-family: "Orbitron", monospace; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; }
+.mc-val.manana   { color: var(--yellow); text-shadow: 0 0 10px rgba(255,226,48,0.5); }
+.mc-val.tarde    { color: var(--cyan);   text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+.mc-val.inactivo { color: var(--muted); }
+.clock-card { background: var(--s1); border: 1px solid var(--border2); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem; position: relative; overflow: hidden; animation: fadeUp 0.5s 0.12s ease both; }
+.clock-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #00e5ff, transparent); opacity: 1; }
+.clock-card::after  { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--magenta), transparent); opacity: 0.3; }
+.cc-lbl { font-family: "Orbitron", monospace; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.cc-val { font-family: "Orbitron", monospace; font-size: 1.65rem; font-weight: 700; color: var(--cyan); letter-spacing: 0.04em; line-height: 1; text-shadow: 0 0 18px rgba(0,229,255,0.5); }
+.cdown-val { font-family: "Orbitron", monospace; font-size: 1rem; font-weight: 700; color: var(--yellow); line-height: 1; text-align: right; text-shadow: 0 0 14px rgba(255,226,48,0.5); transition: color 0.3s; }
+.cdown-val.active { color: var(--green); text-shadow: 0 0 14px rgba(0,232,122,0.6); }
+.cdown-val.done   { color: var(--muted); text-shadow: none; }
+.abanner { display: none; align-items: center; gap: 0.75rem; border-radius: 12px; padding: 0.875rem 1.25rem; margin-bottom: 0.875rem; font-family: "Orbitron", monospace; font-size: 0.6rem; letter-spacing: 0.05em; }
+.abanner.verde    { background: rgba(0,232,122,0.07);  border: 1px solid rgba(0,232,122,0.35);  color: #00e87a; }
+.abanner.amarillo { background: rgba(255,226,48,0.07); border: 1px solid rgba(255,226,48,0.35); color: #ffe230; }
+.abanner.visible  { display: flex; }
+.reco { display: none; background: var(--s1); border: 1px solid rgba(0,232,122,0.28); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 0.875rem; position: relative; overflow: hidden; }
+.reco::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0.45; }
 .reco.visible { display: block; }
-.reco-tag { font-family: “Orbitron”, monospace; font-size: 0.5rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(–green); margin-bottom: 0.5rem; }
-.reco-main { font-family: “Orbitron”, monospace; font-size: 0.88rem; font-weight: 700; color: var(–text); line-height: 1.4; margin-bottom: 0.4rem; }
-.reco-main .g { color: var(–green); text-shadow: 0 0 10px rgba(0,232,122,0.5); }
-.reco-sub { font-size: 0.67rem; color: var(–muted); letter-spacing: 0.04em; }
-
-/* ── TOOLBAR ── */
+.reco-tag { font-family: "Orbitron", monospace; font-size: 0.5rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem; }
+.reco-main { font-family: "Orbitron", monospace; font-size: 0.88rem; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 0.4rem; }
+.reco-main .g { color: var(--green); text-shadow: 0 0 10px rgba(0,232,122,0.5); }
+.reco-sub { font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
 .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem; animation: fadeUp 0.5s 0.15s ease both; }
-.ts { font-family: “Orbitron”, monospace; font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(–muted); }
-.btn-neon { font-family: “Orbitron”, monospace; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #000; background: #00e5ff; border: none; padding: 11px 22px; border-radius: 10px; cursor: pointer; box-shadow: 0 0 20px rgba(0,229,255,0.7), 0 0 40px rgba(0,229,255,0.35), inset 0 1px 0 rgba(255,255,255,0.3); transition: box-shadow 0.2s, transform 0.15s; position: relative; overflow: hidden; font-size: 0.62rem; }
+.ts { font-family: "Orbitron", monospace; font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+.btn-neon { font-family: "Orbitron", monospace; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #000; background: #00e5ff; border: none; padding: 11px 22px; border-radius: 10px; cursor: pointer; box-shadow: 0 0 20px rgba(0,229,255,0.7), 0 0 40px rgba(0,229,255,0.35), inset 0 1px 0 rgba(255,255,255,0.3); transition: box-shadow 0.2s, transform 0.15s; position: relative; overflow: hidden; }
 .btn-neon:active { transform: scale(0.96); }
-.btn-neon::before { content: “”; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s; }
+.btn-neon::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s; }
 .btn-neon:hover::before { left: 100%; }
-
-/* ── PARADAS ── */
 .paradas { display: grid; gap: 0.875rem; margin-bottom: 0.875rem; }
-.p-card { background: var(–s1); border: 1px solid var(–border2); border-radius: 16px; overflow: hidden; transition: border-color 0.4s, box-shadow 0.4s, opacity 0.4s; animation: fadeUp 0.5s ease both; position: relative; }
-.p-card::before { content: “”; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(–cyan2), transparent); opacity: 0.18; }
+.p-card { background: var(--s1); border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; transition: border-color 0.4s, box-shadow 0.4s, opacity 0.4s; animation: fadeUp 0.5s ease both; position: relative; }
+.p-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan2), transparent); opacity: 0.18; }
 .p-card:nth-child(2) { animation-delay: 0.1s; }
 .p-card.winner { border-color: rgba(0,232,122,0.38); box-shadow: 0 0 28px rgba(0,232,122,0.07); }
-.p-card.winner::before { background: linear-gradient(90deg, transparent, var(–green), transparent); opacity: 0.38; }
+.p-card.winner::before { background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0.38; }
 .p-card.loser  { opacity: 0.35; }
-.p-head { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(–border); }
-.p-num { font-family: “Orbitron”, monospace; font-size: 1.1rem; font-weight: 900; color: #000; background: linear-gradient(135deg, #00e5ff, #38b6ff); padding: 0; border-radius: 10px; line-height: 1; width: 64px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 20px rgba(0,229,255,0.7), 0 0 40px rgba(0,229,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3); }
+.p-head { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.p-num { font-family: "Orbitron", monospace; font-size: 1.1rem; font-weight: 900; color: #000; background: linear-gradient(135deg, #00e5ff, #38b6ff); padding: 0; border-radius: 10px; line-height: 1; width: 64px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 20px rgba(0,229,255,0.7), 0 0 40px rgba(0,229,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3); }
 .p-num.alt { background: linear-gradient(135deg, #cc00ff, #8800cc); box-shadow: 0 0 20px rgba(204,0,255,0.7), 0 0 40px rgba(204,0,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2); width: 64px; height: 44px; }
 .p-info { flex: 1; min-width: 0; }
-.p-nombre { font-family: “Orbitron”, monospace; font-size: 0.6rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff; margin-bottom: 4px; letter-spacing: 0.05em; }
-.p-dest { font-size: 0.57rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(–muted); }
-.w-chip { display: none; font-family: “Orbitron”, monospace; font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(–green); background: rgba(0,232,122,0.08); border: 1px solid rgba(0,232,122,0.22); padding: 4px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; text-shadow: 0 0 8px rgba(0,232,122,0.5); }
+.p-nombre { font-family: "Orbitron", monospace; font-size: 0.6rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 4px; letter-spacing: 0.05em; }
+.p-dest { font-size: 0.57rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.w-chip { display: none; font-family: "Orbitron", monospace; font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); background: rgba(0,232,122,0.08); border: 1px solid rgba(0,232,122,0.22); padding: 4px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; text-shadow: 0 0 8px rgba(0,232,122,0.5); }
 .p-card.winner .w-chip { display: block; }
 .p-body { padding: 0.75rem 1.25rem; }
-.a-row { display: flex; align-items: center; gap: 0.875rem; padding: 0.6rem 0; border-bottom: 1px solid var(–border); }
+.a-row { display: flex; align-items: center; gap: 0.875rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
 .a-row:last-child { border-bottom: none; }
-.a-min { font-family: “Orbitron”, monospace; font-size: 1.75rem; font-weight: 900; line-height: 1; min-width: 56px; color: var(–muted); transition: color 0.3s, text-shadow 0.3s; }
-.a-min.now  { color: var(–green);  text-shadow: 0 0 18px rgba(0,232,122,0.6); }
-.a-min.soon { color: var(–yellow); text-shadow: 0 0 14px rgba(255,226,48,0.5); }
-.a-min.ok   { color: var(–cyan2);  text-shadow: 0 0 10px rgba(56,182,255,0.3); }
+.a-min { font-family: "Orbitron", monospace; font-size: 1.75rem; font-weight: 900; line-height: 1; min-width: 56px; color: var(--muted); transition: color 0.3s, text-shadow 0.3s; }
+.a-min.now  { color: var(--green);  text-shadow: 0 0 18px rgba(0,232,122,0.6); }
+.a-min.soon { color: var(--yellow); text-shadow: 0 0 14px rgba(255,226,48,0.5); }
+.a-min.ok   { color: var(--cyan2);  text-shadow: 0 0 10px rgba(56,182,255,0.3); }
 .a-info { flex: 1; }
-.a-lbl { font-family: “Orbitron”, monospace; font-size: 0.54rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(–muted); }
-.a-int { font-size: 0.62rem; color: var(–muted2); margin-top: 2px; }
+.a-lbl { font-family: "Orbitron", monospace; font-size: 0.54rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.a-int { font-size: 0.62rem; color: var(--muted2); margin-top: 2px; }
 .a-bar { width: 44px; }
-.a-track { height: 3px; background: var(–muted2); border-radius: 2px; overflow: hidden; }
+.a-track { height: 3px; background: var(--muted2); border-radius: 2px; overflow: hidden; }
 .a-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
-.a-fill.now  { background: var(–green); box-shadow: 0 0 6px var(–green); }
-.a-fill.soon { background: var(–yellow); }
-.a-fill.ok   { background: var(–cyan2); }
-.no-data { font-family: “Orbitron”, monospace; font-size: 0.54rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(–muted); padding: 1.25rem 0; text-align: center; }
-.skel { height: 54px; background: linear-gradient(90deg, var(–s2) 25%, var(–border) 50%, var(–s2) 75%); background-size: 300% 100%; animation: shimmer 1.5s infinite; border-radius: 9px; margin: 0.5rem 0; }
-
-/* ── BOTTOM ── */
-.bot-card { background: var(–s1); border: 1px solid var(–border2); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 0.875rem; display: flex; align-items: center; justify-content: space-between; animation: fadeUp 0.5s 0.2s ease both; position: relative; overflow: hidden; }
-.bot-card::before { content: “”; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(–magenta), transparent); opacity: 0.25; }
-.bt-title { font-family: “Orbitron”, monospace; font-size: 0.6rem; font-weight: 700; color: var(–text); letter-spacing: 0.08em; margin-bottom: 4px; }
-.bt-sub { font-size: 0.57rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(–muted); }
-.toggle { width: 50px; height: 28px; background: var(–muted2); border: 1px solid var(–border2); border-radius: 14px; cursor: pointer; position: relative; transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; flex-shrink: 0; }
-.toggle::after { content: “”; position: absolute; width: 22px; height: 22px; background: var(–muted); border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s, background 0.3s, box-shadow 0.3s; }
+.a-fill.now  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.a-fill.soon { background: var(--yellow); }
+.a-fill.ok   { background: var(--cyan2); }
+.no-data { font-family: "Orbitron", monospace; font-size: 0.54rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 1.25rem 0; text-align: center; }
+.skel { height: 54px; background: linear-gradient(90deg, var(--s2) 25%, var(--border) 50%, var(--s2) 75%); background-size: 300% 100%; animation: shimmer 1.5s infinite; border-radius: 9px; margin: 0.5rem 0; }
+.bot-card { background: var(--s1); border: 1px solid var(--border2); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 0.875rem; display: flex; align-items: center; justify-content: space-between; animation: fadeUp 0.5s 0.2s ease both; position: relative; overflow: hidden; }
+.bot-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--magenta), transparent); opacity: 0.25; }
+.bt-title { font-family: "Orbitron", monospace; font-size: 0.6rem; font-weight: 700; color: var(--text); letter-spacing: 0.08em; margin-bottom: 4px; }
+.bt-sub { font-size: 0.57rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.toggle { width: 50px; height: 28px; background: var(--muted2); border: 1px solid var(--border2); border-radius: 14px; cursor: pointer; position: relative; transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; flex-shrink: 0; }
+.toggle::after { content: ""; position: absolute; width: 22px; height: 22px; background: var(--muted); border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s, background 0.3s, box-shadow 0.3s; }
 .toggle.on { background: rgba(0,232,122,0.12); border-color: rgba(0,232,122,0.38); box-shadow: 0 0 12px rgba(0,232,122,0.18); }
-.toggle.on::after { transform: translateX(22px); background: var(–green); box-shadow: 0 0 10px rgba(0,232,122,0.7); }
-
-.pwa-card { background: var(–s1); border: 1px solid var(–border); border-radius: 16px; padding: 1rem 1.25rem; animation: fadeUp 0.5s 0.28s ease both; }
-.pwa-title { font-family: “Orbitron”, monospace; font-size: 0.6rem; font-weight: 700; color: var(–cyan); letter-spacing: 0.1em; margin-bottom: 0.4rem; text-shadow: 0 0 10px rgba(0,229,255,0.35); }
-.pwa-text { font-size: 0.64rem; color: var(–muted); line-height: 1.7; letter-spacing: 0.03em; }
-.pwa-text strong { color: var(–yellow); }
-
+.toggle.on::after { transform: translateX(22px); background: var(--green); box-shadow: 0 0 10px rgba(0,232,122,0.7); }
+.pwa-card { background: var(--s1); border: 1px solid var(--border); border-radius: 16px; padding: 1rem 1.25rem; animation: fadeUp 0.5s 0.28s ease both; }
+.pwa-title { font-family: "Orbitron", monospace; font-size: 0.6rem; font-weight: 700; color: var(--cyan); letter-spacing: 0.1em; margin-bottom: 0.4rem; text-shadow: 0 0 10px rgba(0,229,255,0.35); }
+.pwa-text { font-size: 0.64rem; color: var(--muted); line-height: 1.7; letter-spacing: 0.03em; }
+.pwa-text strong { color: var(--yellow); }
 @keyframes fadeUp  { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
 @keyframes blink   { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 </style>
-
 </head>
 <body>
 <div class="wrap">
@@ -221,32 +137,40 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     <div class="mgp-tag">MGP &middot; Mar del Plata</div>
   </div>
 
+  <div class="modo-card">
+    <div><div class="mc-lbl">Modo activo</div><div class="mc-val" id="modo-val">--</div></div>
+    <div style="text-align:right"><div class="mc-lbl">Pr&oacute;xima alerta</div><div class="cdown-val" id="cdown">--:--</div></div>
+  </div>
+
   <div class="clock-card">
     <div><div class="cc-lbl">Hora actual</div><div class="cc-val" id="clock">--:--:--</div></div>
-    <div style="text-align:right"><div class="cc-lbl">Pr&oacute;xima alerta</div><div class="cdown-val" id="cdown">--:--</div></div>
+    <div style="text-align:right"><div class="cc-lbl">D&iacute;a</div><div class="cc-val" style="font-size:0.95rem" id="dia-lbl">--</div></div>
   </div>
 
   <div class="abanner" id="abanner">
-    <span style="font-size:1.1rem">&#9889;</span>
-    <span>Son las 17:15 &mdash; consultando cu&aacute;l llega antes&hellip;</span>
+    <span style="font-size:1.1rem" id="abanner-ico">&#9889;</span>
+    <span id="abanner-txt">Consultando...</span>
   </div>
 
   <div class="reco" id="reco">
-    <div class="reco-tag">&#9658; Sistema recomendaci&oacute;n activo</div>
+    <div class="reco-tag">&#9658; Recomendaci&oacute;n</div>
     <div class="reco-main" id="reco-main">&mdash;</div>
     <div class="reco-sub" id="reco-sub">&mdash;</div>
   </div>
 
   <div class="toolbar">
     <span class="ts" id="ts">Sin datos a&uacute;n</span>
-    <button class="btn-neon" onclick="consultarAmbas()">&#8635; Actualizar</button>
+    <button class="btn-neon" onclick="consultarManual()">&#8635; Actualizar</button>
   </div>
 
   <div class="paradas">
     <div class="p-card" id="c523">
       <div class="p-head">
         <div class="p-num">523</div>
-        <div class="p-info"><div class="p-nombre">G&uuml;emes y Juan B. Justo</div><div class="p-dest">Al Faro</div></div>
+        <div class="p-info">
+          <div class="p-nombre" id="nom523">--</div>
+          <div class="p-dest"   id="dst523">--</div>
+        </div>
         <div class="w-chip">&#10003; TOM&Aacute; ESTE</div>
       </div>
       <div class="p-body" id="b523"><div class="skel"></div></div>
@@ -254,7 +178,10 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     <div class="p-card" id="c511">
       <div class="p-head">
         <div class="p-num alt">511</div>
-        <div class="p-info"><div class="p-nombre">Alem y Juan B. Justo</div><div class="p-dest">A Acantilados &middot; Ramal Al Faro</div></div>
+        <div class="p-info">
+          <div class="p-nombre">Alem y Juan B. Justo</div>
+          <div class="p-dest">A Acantilados &middot; Al Faro</div>
+        </div>
         <div class="w-chip">&#10003; TOM&Aacute; ESTE</div>
       </div>
       <div class="p-body" id="b511"><div class="skel"></div></div>
@@ -262,36 +189,86 @@ text-shadow: 0 1px 4px rgba(0,0,0,0.8);
   </div>
 
   <div class="bot-card">
-    <div><div class="bt-title">Notificaci&oacute;n 17:15</div><div class="bt-sub">Aviso autom&aacute;tico en el celular</div></div>
+    <div>
+      <div class="bt-title">Notificaciones</div>
+      <div class="bt-sub">Lu-Vi &middot; Ma&ntilde;ana &le;10min &middot; Tarde 17:10</div>
+    </div>
     <button class="toggle" id="ntoggle" onclick="toggleNotif()"></button>
   </div>
 
   <div class="pwa-card">
-    <div class="pwa-title">&#128241; Instal&aacute; BondiNow como App</div>
-    <div class="pwa-text">En Safari toc&aacute; <strong>Compartir &#8593;</strong> &rarr; <strong>"Agregar a inicio"</strong>. Funciona como app nativa.</div>
+    <div class="pwa-title">&#128241; BondiNow</div>
+    <div class="pwa-text">
+      <strong>Ma&ntilde;ana</strong>: avisa cuando el 523 est&eacute; a &le;10 min (Lu-Vi 7:00-9:00).<br>
+      <strong>Tarde</strong>: compara 523 vs 511 desde las 17:10 (Lu-Vi).<br>
+      S&aacute;bados, domingos y feriados sin alertas.
+    </div>
   </div>
 
 </div>
 <script>
 const API="https://colectivos-mdp.onrender.com";
-const PARADAS=[
-  {id:"523",linea:"523",calle:"MARTIN MIGUEL DE GUEMES",inter:"AVENIDA JUAN B. JUSTO",sentido:"0"},
-  {id:"511",linea:"511",calle:"LEANDRO N. ALEM",inter:"AVENIDA JUAN B. JUSTO",sentido:"0"}
-];
-let res={},notifOn=false,notifFired=false,loop=null;
-function tick(){const n=new Date(),p=x=>String(x).padStart(2,"0");document.getElementById("clock").textContent=p(n.getHours())+":"+p(n.getMinutes())+":"+p(n.getSeconds());updateCdown(n);checkAlerta(n);}
-function updateCdown(n){const t=new Date(n);t.setHours(17,15,0,0);const d=t-n,el=document.getElementById("cdown");if(d>0){const h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);el.textContent=(h>0?h+":":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");el.className="cdown-val";}else if(d>-1800000){el.textContent="ACTIVO";el.className="cdown-val active";}else{el.textContent="PASADO";el.className="cdown-val done";}}
-function checkAlerta(n){const h=n.getHours(),m=n.getMinutes(),on=h===17&&m>=15&&m<=59;const ab=document.getElementById("abanner");if(on){ab.classList.add("visible");if(!loop){consultarAmbas();loop=setInterval(consultarAmbas,60000);}if(notifOn&&!notifFired&&m===15){notifFired=true;fireNotif();}}else{ab.classList.remove("visible");if(loop){clearInterval(loop);loop=null;}}}
+const UMBRAL=10;
+const FERIADOS=new Set(["2025-01-01","2025-03-03","2025-03-04","2025-04-02","2025-04-18","2025-04-19","2025-05-01","2025-05-25","2025-06-20","2025-07-09","2025-08-17","2025-10-12","2025-11-20","2025-12-08","2025-12-25","2026-01-01","2026-02-16","2026-02-17","2026-04-02","2026-04-03","2026-04-17","2026-05-01","2026-05-25","2026-06-15","2026-06-20","2026-07-09","2026-08-17","2026-10-12","2026-11-20","2026-12-08","2026-12-25"]);
+const PM={id:"523m",linea:"523",calle:"CALLE 24",inter:"ISLA CERDENA",sentido:"0"};
+const PT=[{id:"523",linea:"523",calle:"MARTIN MIGUEL DE GUEMES",inter:"AVENIDA JUAN B. JUSTO",sentido:"0"},{id:"511",linea:"511",calle:"LEANDRO N. ALEM",inter:"AVENIDA JUAN B. JUSTO",sentido:"0"}];
+let res={},notifOn=false,notifTFired=false,loopM=null,loopT=null;
+const DIAS=["Dom","Lun","Mar","Mi\u00e9","Jue","Vie","S\u00e1b"];
+function fkey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function esFeriado(d){return FERIADOS.has(fkey(d));}
+function esLV(d){return d.getDay()>=1&&d.getDay()<=5&&!esFeriado(d);}
+function tick(){const n=new Date(),p=x=>String(x).padStart(2,"0");document.getElementById("clock").textContent=p(n.getHours())+":"+p(n.getMinutes())+":"+p(n.getSeconds());document.getElementById("dia-lbl").textContent=DIAS[n.getDay()]+(esFeriado(n)?" \u26a0":"");updateUI(n);}
+function updateUI(n){
+  const h=n.getHours(),m=n.getMinutes(),lv=esLV(n);
+  const mv=document.getElementById("modo-val"),cd=document.getElementById("cdown"),ab=document.getElementById("abanner");
+  if(!lv){mv.textContent=esFeriado(n)?"FERIADO":"FIN DE SEMANA";mv.className="mc-val inactivo";cd.textContent="Sin alertas";cd.className="cdown-val done";ab.classList.remove("visible");stopLoops();return;}
+  if(h<7){mv.textContent="MANANA 7:00";mv.className="mc-val manana";const t=new Date(n);t.setHours(7,0,0,0);setCdown(cd,t-n);ab.classList.remove("visible");document.getElementById("c511").style.display="none";stopLoops();return;}
+  if(h>=7&&h<9){mv.textContent="MANANA ACTIVO";mv.className="mc-val manana";cd.textContent="VIGILANDO";cd.className="cdown-val active";document.getElementById("nom523").textContent="Calle 24 e Isla Cerde\u00f1a";document.getElementById("dst523").textContent="A Tetamanti";document.getElementById("c511").style.display="none";if(!loopM){consultarManana();loopM=setInterval(consultarManana,60000);}if(loopT){clearInterval(loopT);loopT=null;}return;}
+  if(h>=9&&(h<17||(h===17&&m<10))){mv.textContent="TARDE 17:10";mv.className="mc-val tarde";const t=new Date(n);t.setHours(17,10,0,0);setCdown(cd,t-n);ab.classList.remove("visible");document.getElementById("nom523").textContent="G\u00fcemes y Juan B. Justo";document.getElementById("dst523").textContent="Al Faro";document.getElementById("c511").style.display="";stopLoops();return;}
+  if((h===17&&m>=10)||(h===18&&m<=30)){mv.textContent="TARDE ACTIVO";mv.className="mc-val tarde";cd.textContent="ACTIVO";cd.className="cdown-val active";document.getElementById("nom523").textContent="G\u00fcemes y Juan B. Justo";document.getElementById("dst523").textContent="Al Faro";document.getElementById("c511").style.display="";if(!loopT){consultarTarde();loopT=setInterval(consultarTarde,60000);}if(notifOn&&!notifTFired){notifTFired=true;fireNotif();}if(loopM){clearInterval(loopM);loopM=null;}return;}
+  mv.textContent="FINALIZADO";mv.className="mc-val inactivo";cd.textContent="Hasta ma\u00f1ana";cd.className="cdown-val done";ab.classList.remove("visible");stopLoops();
+}
+function stopLoops(){if(loopM){clearInterval(loopM);loopM=null;}if(loopT){clearInterval(loopT);loopT=null;}}
+function setCdown(el,ms){if(ms<=0){el.textContent="ACTIVO";el.className="cdown-val active";return;}const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);el.textContent=(h>0?h+":":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");el.className="cdown-val";}
 async function fetchP(p){const url=API+"/api/arribo?linea="+p.linea+"&calle="+encodeURIComponent(p.calle)+"&inter="+encodeURIComponent(p.inter)+"&sentido="+p.sentido;try{return await(await fetch(url,{signal:AbortSignal.timeout(10000)})).json();}catch(e){return{ok:false,error:e.message};}}
-async function consultarAmbas(){setLive("warn","BUSCANDO");const[r5,r1]=await Promise.all([fetchP(PARADAS[0]),fetchP(PARADAS[1])]);res["523"]=r5;res["511"]=r1;renderP("523",r5);renderP("511",r1);updateReco();const n=new Date();document.getElementById("ts").textContent="Act. "+n.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});setLive(r5.ok||r1.ok?"on":"off",r5.ok||r1.ok?"LIVE":"SIN DATOS");}
-function renderP(id,data){const el=document.getElementById("b"+id);if(!data.ok||!data.arrivals||!data.arrivals.length){el.innerHTML='<div class="no-data">Sin datos disponibles ahora</div>';return;}el.innerHTML=data.arrivals.slice(0,3).map(a=>{const min=parseInt(a.minutos??0);const cls=min<=2?"now":min<=7?"soon":"ok";const pct=Math.max(4,100-(min/40)*100);const lbl=min===0?"LLEGANDO YA":min+" MIN";return'<div class="a-row"><div class="a-min '+cls+'">'+(min||0)+'</div><div class="a-info"><div class="a-lbl">'+lbl+'</div><div class="a-int">Interno '+(a.interno||"—")+'</div></div><div class="a-bar"><div class="a-track"><div class="a-fill '+cls+'" style="width:'+pct+'%"></div></div></div></div>';}).join("");}
+async function consultarManana(){
+  setLive("warn","BUSCANDO");
+  const r=await fetchP(PM);res["523m"]=r;renderP("523",r);
+  const n=new Date();document.getElementById("ts").textContent="Act. "+n.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const minutos=(r.ok&&r.arrivals&&r.arrivals.length)?parseInt(r.arrivals[0].minutos??99):99;
+  const ab=document.getElementById("abanner");
+  if(minutos<=UMBRAL){
+    ab.className="abanner verde visible";
+    document.getElementById("abanner-ico").textContent="\u26a1";
+    document.getElementById("abanner-txt").textContent="\u00a1523 llega en "+minutos+" min! Sal ahora \u2192 Calle 24 e Isla Cerde\u00f1a";
+    if(notifOn&&Notification.permission==="granted"){new Notification("\ud83c\udf05 \u00a1Sal ya! 523 en "+minutos+" min",{body:"Calle 24 e Isla Cerde\u00f1a \u2192 A Tetamanti"});}
+    setLive("on","LIVE");
+  }else if(minutos<99){
+    ab.className="abanner amarillo visible";
+    document.getElementById("abanner-ico").textContent="\ud83d\udd52";
+    document.getElementById("abanner-txt").textContent="523 en "+minutos+" min \u2014 Avisando cuando est\u00e9 a \u226410 min";
+    setLive("warn",minutos+" MIN");
+  }else{ab.classList.remove("visible");setLive("off","SIN DATOS");}
+}
+async function consultarTarde(){
+  setLive("warn","BUSCANDO");
+  const[r5,r1]=await Promise.all([fetchP(PT[0]),fetchP(PT[1])]);
+  res["523"]=r5;res["511"]=r1;renderP("523",r5);renderP("511",r1);updateReco();
+  const n=new Date();document.getElementById("ts").textContent="Act. "+n.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  setLive(r5.ok||r1.ok?"on":"off",r5.ok||r1.ok?"LIVE":"SIN DATOS");
+  const ab=document.getElementById("abanner");ab.className="abanner verde visible";
+  document.getElementById("abanner-ico").textContent="\u26a1";
+  document.getElementById("abanner-txt").textContent="17:10 \u2014 Comparando 523 vs 511...";
+}
+function consultarManual(){const n=new Date(),h=n.getHours(),m=n.getMinutes();if(!esLV(n)){setLive("warn","NO LABORABLE");return;}if(h>=7&&h<9)consultarManana();else if((h===17&&m>=10)||(h===18&&m<=30))consultarTarde();else setLive("warn","FUERA DE HORARIO");}
+function renderP(id,data){const el=document.getElementById("b"+id);if(!data.ok||!data.arrivals||!data.arrivals.length){el.innerHTML='<div class="no-data">Sin datos disponibles ahora</div>';return;}el.innerHTML=data.arrivals.slice(0,3).map(a=>{const min=parseInt(a.minutos??0);const cls=min<=2?"now":min<=7?"soon":"ok";const pct=Math.max(4,100-(min/40)*100);const lbl=min===0?"LLEGANDO YA":min+" MIN";return'<div class="a-row"><div class="a-min '+cls+'">'+(min||0)+'</div><div class="a-info"><div class="a-lbl">'+lbl+'</div><div class="a-int">Interno '+(a.interno||"-")+'</div></div><div class="a-bar"><div class="a-track"><div class="a-fill '+cls+'" style="width:'+pct+'%"></div></div></div></div>';}).join("");}
 function getMin(id){const r=res[id];return(r?.ok&&r?.arrivals?.length)?parseInt(r.arrivals[0].minutos??99):99;}
-function updateReco(){const m5=getMin("523"),m1=getMin("511");const rc=document.getElementById("reco");const c5=document.getElementById("c523"),c1=document.getElementById("c511");c5.classList.remove("winner","loser");c1.classList.remove("winner","loser");if(m5===99&&m1===99){rc.classList.remove("visible");return;}rc.classList.add("visible");if(m5<=m1){c5.classList.add("winner");c1.classList.add("loser");document.getElementById("reco-main").innerHTML='<span class="g">Línea 523</span> — Güemes y Juan B. Justo';document.getElementById("reco-sub").textContent="Llega en "+m5+" min"+(m1<99?" · "+(m1-m5)+" min antes que el 511":"");}else{c1.classList.add("winner");c5.classList.add("loser");document.getElementById("reco-main").innerHTML='<span class="g">Línea 511</span> — Alem y Juan B. Justo';document.getElementById("reco-sub").textContent="Llega en "+m1+" min"+(m5<99?" · "+(m5-m1)+" min antes que el 523":"");}}
-function toggleNotif(){const btn=document.getElementById("ntoggle");if(!notifOn){if(!("Notification"in window)){alert("Tu navegador no soporta notificaciones.");return;}Notification.requestPermission().then(p=>{if(p==="granted"){notifOn=true;btn.classList.add("on");new Notification("BondiNow activado",{body:"Te avisaremos a las 17:15 cuál colectivo tomar."});}else alert("Permiso denegado.");});}else{notifOn=false;btn.classList.remove("on");}}
-function fireNotif(){if(Notification.permission!=="granted")return;const m5=getMin("523"),m1=getMin("511");const body=m5<=m1&&m5<99?"Tomá el 523 en Güemes — "+m5+" min":m1<99?"Tomá el 511 en Alem — "+m1+" min":"Abrí BondiNow para ver el estado.";new Notification("17:15 — Tu colectivo:",{body});}
+function updateReco(){const m5=getMin("523"),m1=getMin("511");const rc=document.getElementById("reco");const c5=document.getElementById("c523"),c1=document.getElementById("c511");c5.classList.remove("winner","loser");c1.classList.remove("winner","loser");if(m5===99&&m1===99){rc.classList.remove("visible");return;}rc.classList.add("visible");if(m5<=m1){c5.classList.add("winner");c1.classList.add("loser");document.getElementById("reco-main").innerHTML='<span class="g">L\u00ednea 523</span> \u2014 G\u00fcemes y Juan B. Justo';document.getElementById("reco-sub").textContent="Llega en "+m5+" min"+(m1<99?" \u00b7 "+(m1-m5)+" min antes que el 511":"");}else{c1.classList.add("winner");c5.classList.add("loser");document.getElementById("reco-main").innerHTML='<span class="g">L\u00ednea 511</span> \u2014 Alem y Juan B. Justo';document.getElementById("reco-sub").textContent="Llega en "+m1+" min"+(m5<99?" \u00b7 "+(m5-m1)+" min antes que el 523":"");}}
+function toggleNotif(){const btn=document.getElementById("ntoggle");if(!notifOn){if(!("Notification"in window)){alert("Tu navegador no soporta notificaciones.");return;}Notification.requestPermission().then(p=>{if(p==="granted"){notifOn=true;btn.classList.add("on");new Notification("BondiNow activado",{body:"Alertas Lu-Vi activadas"});}else alert("Permiso denegado.");});}else{notifOn=false;btn.classList.remove("on");}}
+function fireNotif(){if(Notification.permission!=="granted")return;const m5=getMin("523"),m1=getMin("511");const body=m5<=m1&&m5<99?"Tom\u00e1 el 523 en G\u00fcemes \u2014 "+m5+" min":m1<99?"Tom\u00e1 el 511 en Alem \u2014 "+m1+" min":"Abr\u00ed BondiNow.";new Notification("\ud83c\udf06 17:10 \u2014 Tu colectivo:",{body});}
 function setLive(s,t){document.getElementById("ldot").className="ldot"+(s==="on"?" on":s==="warn"?" warn":"");document.getElementById("ltxt").textContent=t;}
 setInterval(tick,1000);tick();
-window.addEventListener("load",async()=>{try{const d=await(await fetch(API+"/api/status",{signal:AbortSignal.timeout(6000)})).json();if(d.ok&&d.mgp.online){setLive("on","LIVE");consultarAmbas();}else{setLive("warn","MGP OFFLINE");["b523","b511"].forEach(id=>document.getElementById(id).innerHTML='<div class="no-data">MGP sin respuesta ahora</div>');}}catch{setLive("off","SIN CONEXIÓN");["b523","b511"].forEach(id=>document.getElementById(id).innerHTML='<div class="no-data">Sin conexión</div>');}}); 
+window.addEventListener("load",async()=>{try{const d=await(await fetch(API+"/api/status",{signal:AbortSignal.timeout(6000)})).json();setLive(d.ok&&d.mgp.online?"on":"warn",d.ok&&d.mgp.online?"LIVE":"MGP OFFLINE");}catch{setLive("off","SIN CONEXION");}});
 </script>
 </body>
 </html>
